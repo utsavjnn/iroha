@@ -1,0 +1,38 @@
+/**
+ * Copyright Soramitsu Co., Ltd. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#ifndef IROHA_AMETSUCHI_DATA_MODEL_HPP
+#define IROHA_AMETSUCHI_DATA_MODEL_HPP
+
+#include <vector>
+
+#include "ametsuchi/command_executor.hpp"
+#include "interfaces/commands/call_model.hpp"
+#include "interfaces/common_objects/data_model_id.hpp"
+
+namespace iroha::ametsuchi {
+
+  class DataModel {
+   public:
+    virtual ~DataModel() = default;
+
+    virtual CommandResult execute(
+        shared_model::interface::CallModel const &cmd) = 0;
+
+    virtual void commit_transaction() = 0;
+
+    virtual void commit_block() = 0;
+
+    virtual void rollback_transaction() = 0;
+
+    virtual void rollback_block() = 0;
+
+    virtual std::vector<shared_model::interface::DataModelId>
+    getSupportedDataModelIds() const = 0;
+  };
+
+}  // namespace iroha::ametsuchi
+
+#endif
