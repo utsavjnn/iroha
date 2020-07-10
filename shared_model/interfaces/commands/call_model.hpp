@@ -22,6 +22,6 @@ namespace shared_model::interface {
 
     bool operator==(const CallModel &rhs) const;
   };
-}
+}  // namespace shared_model::interface
 
 #endif

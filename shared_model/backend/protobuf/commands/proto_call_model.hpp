@@ -28,6 +28,6 @@ namespace shared_model::proto {
    private:
     const iroha::protocol::CallModel &call_model_;
   };
-}
+}  // namespace shared_model::proto
 
 #endif
