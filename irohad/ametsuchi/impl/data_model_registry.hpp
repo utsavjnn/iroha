@@ -14,19 +14,20 @@
 
 #include "ametsuchi/command_executor.hpp"
 #include "shared_model/backend/protobuf/commands/impl/proto_call_model.hpp"
+#include "shared_model/interfaces/common_objects/data_model_id.hpp"
 
 namespace iroha{
     namespace ametsuchi {
         class DataModelRegistry {
             public:
-                void registerModule(std::unique_ptr<DataModelModule> register);
+                void registerModule(std::unique_ptr<DataModelId> register);
 
                 CommandResult execute(shared_model::proto::CallModel &command)const; 
                 
 
             private:
-                std::map<std::pair<std::string,string::string>,std::reference_wrapper<DataModelModule>> module_type_registry_;
-                std::vector<std::unique_ptr<DataModelModule>> module_registry_;
+                std::map<std::pair<std::string,string::string>,std::reference_wrapper<DataModelId>> module_type_registry_;
+                std::vector<std::unique_ptr<DataModelId>> module_registry_;
         };
     }
 }
