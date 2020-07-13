@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "ametsuchi/command_executor.hpp"
-#include "interfaces/commands/call_model.hpp"
+#include "backend/protobuf/commands/proto_call_model.hpp"
 #include "interfaces/common_objects/data_model_id.hpp"
 
 namespace iroha::ametsuchi {
@@ -19,7 +19,7 @@ namespace iroha::ametsuchi {
     virtual ~DataModel() = default;
 
     virtual CommandResult execute(
-        shared_model::interface::CallModel const &cmd) = 0;
+        shared_model::proto::CallModel const &cmd) = 0;
 
     virtual void commit_transaction() = 0;
 

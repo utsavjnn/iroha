@@ -82,7 +82,7 @@ DataModelPython::~DataModelPython() {
 }
 
 CommandResult DataModelPython::execute(
-    shared_model::interface::CallModel const &cmd) {
+    shared_model::proto::CallModel const &cmd) {
   std::string cmd_str;  // = cmd.SerializeAsString();
 
   try {

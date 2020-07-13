@@ -14,5 +14,6 @@ target_compile_options(data_model_adapter_python
 
 target_link_libraries(data_model_adapter_python
   pybind11::embed
+  shared_model_proto_backend
   )
 

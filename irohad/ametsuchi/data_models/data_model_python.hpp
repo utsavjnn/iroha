@@ -23,8 +23,7 @@ namespace iroha::ametsuchi {
 
     ~DataModelPython();
 
-    CommandResult execute(
-        shared_model::interface::CallModel const &cmd) override;
+    CommandResult execute(shared_model::proto::CallModel const &cmd) override;
 
     void commit_transaction() override;
 
