@@ -22,6 +22,10 @@ namespace shared_model::interface {
 
     bool operator==(const CallModel &rhs) const;
   };
+<<<<<<< ecd811ac360453f4a33a8b9956c03bebdc16ca69
 }  // namespace shared_model::interface
+=======
+}
+>>>>>>> Client Iface and proto class: CallModel command
 
 #endif

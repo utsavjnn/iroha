@@ -28,6 +28,10 @@ namespace shared_model::proto {
    private:
     const iroha::protocol::CallModel &call_model_;
   };
+<<<<<<< ecd811ac360453f4a33a8b9956c03bebdc16ca69
 }  // namespace shared_model::proto
+=======
+}
+>>>>>>> Client Iface and proto class: CallModel command
 
 #endif
