@@ -6,7 +6,7 @@
 #ifndef IROHA_DATA_MODEL_REGISTRY_HPP
 #define IROHA_DATA_MODEL_REGISTRY_HPP
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <pair>
 #include <vector>
@@ -20,14 +20,20 @@ namespace iroha{
     namespace ametsuchi {
         class DataModelRegistry {
             public:
-                void registerModule(std::unique_ptr<DataModelId> register);
+                void registerModule(std::unique_ptr<DataModel> dm_module);
 
                 CommandResult execute(shared_model::proto::CallModel &command)const; 
                 
+                void rollback_block();
 
+                void rollback_transaction();
+
+                void commit_block();
+
+                void commit_transaction();
             private:
-                std::map<std::pair<std::string,string::string>,std::reference_wrapper<DataModelId>> module_type_registry_;
-                std::vector<std::unique_ptr<DataModelId>> module_registry_;
+                std::unordered_map<DataModelId,std::reference_wrapper<DataModel>> module_by_dm_id_;
+                std::vector<std::unique_ptr<DataModel>> modules_;
         };
     }
 }
