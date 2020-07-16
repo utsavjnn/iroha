@@ -24,22 +24,22 @@ namespace iroha{
 
         void DataModelRegistry::rollback_block(){
             for(auto it=modules_.begin();it!=modules_.end();it++)
-                it->rollback_block();
+                (*it)->rollback_block();
         }
 
         void DataModelRegistry::rollback_transaction(){
             for(auto it=modules_.begin();it!=modules_.end();it++)
-                it->rollback_transaction();
+                (*it)->rollback_transaction();
         }
 
         void DataModelRegistry::commit_block(){
             for(auto it=modules_.begin();it!=modules_.end();it++)
-                it->commit_block();
+                (*it)->commit_block();
         }
 
         void DataModelRegistry::commit_transaction(){
             for(auto it=modules_.begin();it!=modules_.end();it++)
-                it->commit_transaction();
+                (*it)->commit_transaction();
         }
 
     }
