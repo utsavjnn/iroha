@@ -71,19 +71,13 @@ DataModelPython::DataModelPython(std::vector<std::string> python_paths,
 }
 
 DataModelPython::~DataModelPython() {
-  Impl &impl = *impl_;
-  impl.func_execute.release().dec_ref();
-  impl.func_commit_tx.release().dec_ref();
-  impl.func_commit_block.release().dec_ref();
-  impl.func_rollback_tx.release().dec_ref();
-  impl.func_rollback_block.release().dec_ref();
-  impl.python_module.release().dec_ref();
+  impl_.reset();
   py::finalize_interpreter();
 }
 
 CommandResult DataModelPython::execute(
     shared_model::proto::CallModel const &cmd) {
-  std::string cmd_str;  // = cmd.SerializeAsString();
+  std::string const cmd_str{cmd.getTransport().SerializeAsString()};
 
   try {
     py::memoryview cmd_mem_view{

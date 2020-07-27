@@ -476,7 +476,7 @@ inline void JsonDeserializerImpl::getVal<IrohadConfig::DataModelModule::Python>(
     IrohadConfig::DataModelModule::Python &dest,
     const rapidjson::Value &src) {
   assert_fatal(src.IsObject(),
-               path + " utility service config top element must be an object.");
+               path + " must be an object.");
   const auto obj = src.GetObject();
   getValByKey(path, dest.python_paths, obj, config_members::PythonPaths);
   getValByKey(path, dest.module_name, obj, config_members::ModuleName);

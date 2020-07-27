@@ -1,3 +1,8 @@
+#
+# Copyright Soramitsu Co., Ltd. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+
 import json
 import os
 
@@ -26,7 +31,7 @@ def execute(cmd_serialized: memoryview):
         val = cmd.payload.set.value
         if not key in _tx_kv_storage:
             if len(_tx_kv_storage) >= MAX_SIZE:
-                return (1, "storage limit exceeded")
+                return (3, "storage limit exceeded")
         _tx_kv_storage[key] = val
         print(f'storage[{key}] is set to {val}')
         return None
