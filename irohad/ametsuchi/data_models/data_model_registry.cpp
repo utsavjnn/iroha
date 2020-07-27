@@ -14,7 +14,8 @@ namespace iroha{
             modules_.emplace_back(std::move(dm_module));
         }
 
-        CommandResult DataModelRegistry::execute(shared_model::proto::CallModel &command)const{
+        CommandResult DataModelRegistry::execute(shared_model::interface::CallModel &command)const{
+            shared_model::proto::CallModel cmd=static_cast<shared_model::proto::CallModel>(command);
             auto it = executors.find(cmd.getTransport().dm_id());
             if (it == executors.end()) {
                 return makeError("unknown data model");

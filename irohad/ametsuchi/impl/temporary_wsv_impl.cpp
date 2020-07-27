@@ -101,7 +101,7 @@ namespace iroha {
         return {};
       };
     }
-
+//here we addd a pointer to our data model rgistry and it becomes not agnostic to our internals
     std::unique_ptr<TemporaryWsv::SavepointWrapper>
     TemporaryWsvImpl::createSavepoint(const std::string &name) {
       return std::make_unique<TemporaryWsvImpl::SavepointWrapperImpl>(
