@@ -191,7 +191,7 @@ namespace {
           SELECT
               COALESCE(bit_or(rp.permission), '0'::bit(%1%))
               & (%2%::bit(%1%) | '%3%'::bit(%1%))
-              != '0'::bit(%1%)
+              != '0'::bit(%1%) has_rp
           FROM role_has_permissions AS rp
               JOIN account_has_roles AS ar on ar.role_id = rp.role_id
               WHERE ar.account_id = %4%)")
@@ -817,12 +817,17 @@ namespace iroha {
                  WHERE ar.account_id = :creator
            ),
            creator_has_enough_permissions AS (
-                SELECT ap.perm & dpb.bits = dpb.bits
-                FROM account_permissions AS ap, domain_role_permissions_bits AS dpb
+                SELECT ap.perm & dpb.bits = dpb.bits OR has_root_perm.has_rp
+                FROM
+                    account_permissions AS ap
+                  , domain_role_permissions_bits AS dpb
+                  , (%3%) as has_root_perm
+
            ),
            has_perm AS (%2%),
           )") % kRolePermissionSetSize
-                % checkAccountRolePermission(Role::kCreateAccount, ":creator"))
+                % checkAccountRolePermission(Role::kCreateAccount, ":creator")
+                % checkAccountRolePermission(Role::kRoot, ":creator"))
                    .str(),
                R"(AND (SELECT * FROM has_perm)
                 AND (SELECT * FROM creator_has_enough_permissions))",
@@ -1537,9 +1542,9 @@ namespace iroha {
           }
 
           using namespace shared_model::interface::types;
+          PostgresBurrowStorage burrow_storage(*sql_, tx_hash, cmd_index);
           return vm_caller_->get()
               .call(
-                  *sql_,
                   tx_hash,
                   cmd_index,
                   EvmCodeHexStringView{command.input()},
@@ -1548,6 +1553,7 @@ namespace iroha {
                       ? std::optional<EvmCalleeHexStringView>{command.callee()
                                                                   ->get()}
                       : std::optional<EvmCalleeHexStringView>{std::nullopt},
+                  burrow_storage,
                   *this,
                   *specific_query_executor_)
               .match(
