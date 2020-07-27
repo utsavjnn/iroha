@@ -14,6 +14,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
+#include "ametsuchi/data_models/data_model_registry.hpp"
 #include "ametsuchi/impl/executor_common.hpp"
 #include "ametsuchi/impl/postgres_block_storage.hpp"
 #include "ametsuchi/impl/postgres_burrow_storage.hpp"
@@ -21,6 +22,7 @@
 #include "ametsuchi/impl/soci_std_optional.hpp"
 #include "ametsuchi/impl/soci_utils.hpp"
 #include "ametsuchi/vm_caller.hpp"
+#include "backend/protobuf/commands/proto_call_model.hpp"
 #include "interfaces/commands/add_asset_quantity.hpp"
 #include "interfaces/commands/add_peer.hpp"
 #include "interfaces/commands/add_signatory.hpp"
@@ -1407,11 +1409,13 @@ namespace iroha {
         std::shared_ptr<shared_model::interface::PermissionToString>
             perm_converter,
         std::shared_ptr<PostgresSpecificQueryExecutor> specific_query_executor,
-        std::optional<std::reference_wrapper<const VmCaller>> vm_caller)
+        std::optional<std::reference_wrapper<const VmCaller>> vm_caller,
+        std::shared_ptr<DataModelRegistry> data_model_registry)
         : sql_(std::move(sql)),
           perm_converter_{std::move(perm_converter)},
           specific_query_executor_{std::move(specific_query_executor)},
-          vm_caller_{std::move(vm_caller)} {
+          vm_caller_{std::move(vm_caller)},
+          data_model_registry_{std::move(data_model_registry)} {
       initStatements();
     }
 
@@ -1927,8 +1931,8 @@ namespace iroha {
         return makeCommandError("CallModel", 1, e.what());
       }
 
-      return irohad.data_model_registry_.execute(command);
-     // return {};
+      return data_model_registry_->execute(
+          static_cast<shared_model::proto::CallModel const &>(command));
     }
 
     CommandResult PostgresCommandExecutor::operator()(

@@ -18,6 +18,7 @@
 namespace iroha {
   namespace ametsuchi {
     class BlockIndex;
+    class DataModelRegistry;
     class PeerQuery;
     class PostgresCommandExecutor;
     class PostgresWsvCommand;
@@ -31,6 +32,7 @@ namespace iroha {
           boost::optional<std::shared_ptr<const iroha::LedgerState>>
               ledger_state,
           std::shared_ptr<PostgresCommandExecutor> command_executor,
+          std::shared_ptr<DataModelRegistry> data_model_registry,
           std::unique_ptr<BlockStorage> block_storage,
           logger::LoggerManagerTreePtr log_manager);
 
@@ -71,6 +73,7 @@ namespace iroha {
       std::unique_ptr<PeerQuery> peer_query_;
       std::unique_ptr<BlockIndex> block_index_;
       std::shared_ptr<TransactionExecutor> transaction_executor_;
+      std::shared_ptr<DataModelRegistry> data_model_registry_;
       std::unique_ptr<BlockStorage> block_storage_;
 
       bool committed;

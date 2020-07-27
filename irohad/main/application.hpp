@@ -23,13 +23,13 @@
 #include "main/startup_params.hpp"
 #include "multi_sig_transactions/gossip_propagation_strategy_params.hpp"
 #include "torii/tls_params.hpp"
-#include "ametsuchi/data_models/data_model_registry.hpp"
 
 namespace iroha {
   class PendingTransactionStorage;
   class PendingTransactionStorageInit;
   class MstProcessor;
   namespace ametsuchi {
+    class DataModelRegistry;
     class WsvRestorer;
     class TxPresenceCache;
     class Storage;
@@ -132,14 +132,13 @@ class Irohad {
              opt_alternative_peers,
          logger::LoggerManagerTreePtr logger_manager,
          iroha::StartupWsvDataPolicy startup_wsv_data_policy,
+         std::shared_ptr<iroha::ametsuchi::DataModelRegistry> registry,
          const boost::optional<iroha::GossipPropagationStrategyParams>
              &opt_mst_gossip_params = boost::none,
          const boost::optional<iroha::torii::TlsParams> &torii_tls_params =
              boost::none,
          boost::optional<IrohadConfig::InterPeerTls> inter_peer_tls_config =
-             boost::none,
-         std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry 
-         );
+             boost::none);
 
   /**
    * Initialization of whole objects in system
@@ -267,12 +266,12 @@ class Irohad {
 
   // ------------------------| internal dependencies |-------------------------
   std::optional<std::unique_ptr<iroha::ametsuchi::VmCaller>> vm_caller_;
+  std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry_;
 
  public:
   shared_model::crypto::Keypair keypair;
   std::unique_ptr<iroha::ametsuchi::PostgresOptions> pg_opt_;
   std::shared_ptr<iroha::ametsuchi::Storage> storage;
-  std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry_;
 
  protected:
   rxcpp::observable<shared_model::interface::types::HashType> finalized_txs_;

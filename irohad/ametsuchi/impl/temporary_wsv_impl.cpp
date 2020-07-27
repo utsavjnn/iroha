@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
 #include <boost/range/adaptor/transformed.hpp>
+#include "ametsuchi/data_models/data_model_registry.hpp"
 #include "ametsuchi/impl/postgres_command_executor.hpp"
 #include "ametsuchi/tx_executor.hpp"
 #include "interfaces/commands/command.hpp"
@@ -20,10 +21,12 @@ namespace iroha {
   namespace ametsuchi {
     TemporaryWsvImpl::TemporaryWsvImpl(
         std::shared_ptr<PostgresCommandExecutor> command_executor,
+        std::shared_ptr<DataModelRegistry> data_model_registry,
         logger::LoggerManagerTreePtr log_manager)
         : sql_(command_executor->getSession()),
           transaction_executor_(std::make_unique<TransactionExecutor>(
               std::move(command_executor))),
+          data_model_registry_(std::move(data_model_registry)),
           log_manager_(std::move(log_manager)),
           log_(log_manager_->getLogger()) {
       sql_ << "BEGIN";
@@ -112,11 +115,6 @@ namespace iroha {
     }
 
     TemporaryWsvImpl::~TemporaryWsvImpl() {
-      try {
-        sql_ << "ROLLBACK";
-      } catch (std::exception &e) {
-        log_->error("Rollback did not happen: {}", e.what());
-      }
     }
 
     TemporaryWsvImpl::SavepointWrapperImpl::SavepointWrapperImpl(
@@ -124,6 +122,7 @@ namespace iroha {
         std::string savepoint_name,
         logger::LoggerPtr log)
         : sql_{wsv.sql_},
+          data_model_registry_{wsv.data_model_registry_},
           savepoint_name_{std::move(savepoint_name)},
           is_released_{false},
           log_(std::move(log)) {
@@ -138,8 +137,10 @@ namespace iroha {
       try {
         if (not is_released_) {
           sql_ << "ROLLBACK TO SAVEPOINT " + savepoint_name_ + ";";
+          data_model_registry_->rollbackTransaction();
         } else {
           sql_ << "RELEASE SAVEPOINT " + savepoint_name_ + ";";
+          data_model_registry_->commitTransaction();
         }
       } catch (std::exception &e) {
         log_->error("SQL error. Reason: {}", e.what());

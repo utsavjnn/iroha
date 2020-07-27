@@ -35,6 +35,7 @@ namespace iroha {
   namespace ametsuchi {
 
     class AmetsuchiTest;
+    class DataModelRegistry;
     class PostgresOptions;
     class VmCaller;
 
@@ -51,6 +52,7 @@ namespace iroha {
           std::unique_ptr<BlockStorageFactory> temporary_block_storage_factory,
           std::shared_ptr<BlockStorage> persistent_block_storage,
           std::optional<std::reference_wrapper<const VmCaller>> vm_caller_ref,
+          std::shared_ptr<DataModelRegistry> data_model_registry,
           logger::LoggerManagerTreePtr log_manager,
           size_t pool_size = 10);
 
@@ -131,6 +133,7 @@ namespace iroha {
           std::unique_ptr<BlockStorageFactory> temporary_block_storage_factory,
           size_t pool_size,
           std::optional<std::reference_wrapper<const VmCaller>> vm_caller,
+          std::shared_ptr<DataModelRegistry> data_model_registry,
           logger::LoggerManagerTreePtr log_manager);
 
      private:
@@ -172,6 +175,8 @@ namespace iroha {
       std::unique_ptr<BlockStorageFactory> temporary_block_storage_factory_;
 
       std::optional<std::reference_wrapper<const VmCaller>> vm_caller_ref_;
+
+      std::shared_ptr<DataModelRegistry> data_model_registry_;
 
       logger::LoggerManagerTreePtr log_manager_;
       logger::LoggerPtr log_;

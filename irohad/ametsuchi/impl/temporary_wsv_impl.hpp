@@ -22,6 +22,7 @@ namespace shared_model {
 namespace iroha {
 
   namespace ametsuchi {
+    class DataModelRegistry;
     class PostgresCommandExecutor;
     class TransactionExecutor;
 
@@ -40,6 +41,7 @@ namespace iroha {
 
        private:
         soci::session &sql_;
+        std::shared_ptr<DataModelRegistry> data_model_registry_;
         std::string savepoint_name_;
         bool is_released_;
         logger::LoggerPtr log_;
@@ -47,6 +49,7 @@ namespace iroha {
 
       TemporaryWsvImpl(
           std::shared_ptr<PostgresCommandExecutor> command_executor,
+          std::shared_ptr<DataModelRegistry> data_model_registry,
           logger::LoggerManagerTreePtr log_manager);
 
       expected::Result<void, validation::CommandError> apply(
@@ -67,6 +70,7 @@ namespace iroha {
 
       soci::session &sql_;
       std::unique_ptr<TransactionExecutor> transaction_executor_;
+      std::shared_ptr<DataModelRegistry> data_model_registry_;
 
       logger::LoggerManagerTreePtr log_manager_;
       logger::LoggerPtr log_;

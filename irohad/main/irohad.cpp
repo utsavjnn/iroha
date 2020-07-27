@@ -14,6 +14,7 @@
 #include <grpc++/grpc++.h>
 #include "ametsuchi/data_models/data_model.hpp"
 #include "ametsuchi/data_models/data_model_python.hpp"
+#include "ametsuchi/data_models/data_model_registry.hpp"
 #include "ametsuchi/storage.hpp"
 #include "backend/protobuf/common_objects/proto_common_objects_factory.hpp"
 #include "common/bind.hpp"
@@ -62,7 +63,7 @@ bool validate_config(const char *flag_name, std::string const &path) {
  */
 bool validate_keypair_name(const char *flag_name, std::string const &path) {
   return not path.empty();
-}r 
+}
 
 /**
  * Creating input argument for the configuration file location.
@@ -124,8 +125,6 @@ std::mutex shutdown_wait_mutex;
 std::lock_guard<std::mutex> shutdown_wait_locker(shutdown_wait_mutex);
 std::shared_ptr<iroha::utility_service::StatusNotifier> daemon_status_notifier =
     std::make_shared<iroha::utility_service::StatusNotifier>();
-
-
 
 void initUtilityService(
     const IrohadConfig::UtilityService &config,
@@ -279,14 +278,14 @@ int main(int argc, char *argv[]) {
     daemon_status_notifier->notify(::iroha::utility_service::Status::kFailed);
     return EXIT_FAILURE;
   }
-  std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry;//making object of registry
-  if(!config.data_model_modules.empty())
-  {
-      for (auto module: makeDataModels(config.data_model_modules)){
-      data_model_registry->registerModule(module);
+
+  auto data_model_registry = std::make_shared<iroha::ametsuchi::DataModelRegistry>();
+  if (config.data_model_modules) {
+    for (auto &module : makeDataModels(*config.data_model_modules)) {
+      data_model_registry->registerModule(std::move(module));
     }
   }
-  
+
   // Configuring iroha daemon
   auto irohad = std::make_unique<Irohad>(
       config.block_store_path,
@@ -308,11 +307,11 @@ int main(int argc, char *argv[]) {
       log_manager->getChild("Irohad"),
       FLAGS_reuse_state ? iroha::StartupWsvDataPolicy::kReuse
                         : iroha::StartupWsvDataPolicy::kDrop,
+      std::move(data_model_registry),
       boost::make_optional(config.mst_support,
                            iroha::GossipPropagationStrategyParams{}),
       config.torii_tls_params,
-      boost::none,
-      std::move(data_model_registry));
+      boost::none);
 
   // Check if iroha daemon storage was successfully initialized
   if (not irohad->storage) {

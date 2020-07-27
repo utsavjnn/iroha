@@ -173,6 +173,7 @@ target_link_libraries(ametsuchi
     SOCI::postgresql
     SOCI::core
     postgres_query_executor
+    data_model_registry
     )
 
 target_compile_definitions(ametsuchi

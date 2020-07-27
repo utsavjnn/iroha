@@ -18,3 +18,10 @@ target_link_libraries(data_model_adapter_python
   pybind11::embed
   shared_model_proto_backend
   )
+
+add_library(data_model_registry
+	data_model_registry.cpp
+	)
+target_link_libraries(data_model_registry
+	shared_model_proto_backend
+	)

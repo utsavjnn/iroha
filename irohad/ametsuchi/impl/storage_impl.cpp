@@ -13,6 +13,7 @@
 #include <boost/format.hpp>
 #include <boost/range/algorithm/replace_if.hpp>
 #include <boost/tuple/tuple.hpp>
+#include "ametsuchi/data_models/data_model_registry.hpp"
 #include "ametsuchi/impl/mutable_storage_impl.hpp"
 #include "ametsuchi/impl/peer_query_wsv.hpp"
 #include "ametsuchi/impl/postgres_block_index.hpp"
@@ -57,6 +58,7 @@ namespace iroha {
         std::unique_ptr<BlockStorageFactory> temporary_block_storage_factory,
         size_t pool_size,
         std::optional<std::reference_wrapper<const VmCaller>> vm_caller_ref,
+        std::shared_ptr<DataModelRegistry> data_model_registry,
         logger::LoggerManagerTreePtr log_manager)
         : block_store_(std::move(block_store)),
           pool_wrapper_(std::move(pool_wrapper)),
@@ -68,6 +70,7 @@ namespace iroha {
           temporary_block_storage_factory_(
               std::move(temporary_block_storage_factory)),
           vm_caller_ref_(std::move(vm_caller_ref)),
+          data_model_registry_(std::move(data_model_registry)),
           log_manager_(std::move(log_manager)),
           log_(log_manager_->getLogger()),
           pool_size_(pool_size),
@@ -90,6 +93,7 @@ namespace iroha {
       tryRollback(postgres_command_executor->getSession());
       return std::make_unique<TemporaryWsvImpl>(
           std::move(postgres_command_executor),
+          data_model_registry_,
           log_manager_->getChild("TemporaryWorldStateView"));
     }
 
@@ -185,7 +189,8 @@ namespace iroha {
               query_response_factory_,
               perm_converter_,
               log_manager_->getChild("SpecificQueryExecutor")->getLogger()),
-          vm_caller_ref_);
+          vm_caller_ref_,
+          data_model_registry_);
     }
 
     std::unique_ptr<MutableStorage> StorageImpl::createMutableStorage(
@@ -203,6 +208,7 @@ namespace iroha {
       return std::make_unique<MutableStorageImpl>(
           ledger_state_,
           std::move(postgres_command_executor),
+          data_model_registry_,
           storage_factory.create(),
           log_manager_->getChild("MutableStorageImpl"));
     }
@@ -258,6 +264,7 @@ namespace iroha {
         std::unique_ptr<BlockStorageFactory> temporary_block_storage_factory,
         std::shared_ptr<BlockStorage> persistent_block_storage,
         std::optional<std::reference_wrapper<const VmCaller>> vm_caller_ref,
+        std::shared_ptr<DataModelRegistry> data_model_registry,
         logger::LoggerManagerTreePtr log_manager,
         size_t pool_size) {
       boost::optional<std::shared_ptr<const iroha::LedgerState>> ledger_state;
@@ -291,6 +298,7 @@ namespace iroha {
                           std::move(temporary_block_storage_factory),
                           pool_size,
                           std::move(vm_caller_ref),
+                          std::move(data_model_registry),
                           std::move(log_manager))));
     }
 
@@ -332,6 +340,7 @@ namespace iroha {
         }
         soci::session sql(*connection_);
         sql << "COMMIT PREPARED '" + prepared_block_name_ + "';";
+        data_model_registry_->commitBlock();
         PostgresBlockIndex block_index(
             std::make_unique<PostgresIndexer>(sql),
             log_manager_->getChild("BlockIndex")->getLogger());
@@ -416,6 +425,15 @@ namespace iroha {
       auto &wsv_impl = static_cast<TemporaryWsvImpl &>(*wsv);
       if (not prepared_blocks_enabled_) {
         log_->warn("prepared blocks are not enabled");
+
+        try {
+          soci::session &sql = wsv_impl.sql_;
+          sql << "ROLLBACK";
+          data_model_registry_->rollbackBlock();
+        } catch (std::exception const &e) {
+          log_->error("Rollback did not happen: {}", e.what());
+        }
+
         return;
       }
       if (block_is_prepared_) {

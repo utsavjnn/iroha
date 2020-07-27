@@ -9,6 +9,7 @@
 #include <boost/variant/apply_visitor.hpp>
 #include <rxcpp/operators/rx-all.hpp>
 #include "ametsuchi/command_executor.hpp"
+#include "ametsuchi/data_models/data_model_registry.hpp"
 #include "ametsuchi/impl/peer_query_wsv.hpp"
 #include "ametsuchi/impl/postgres_block_index.hpp"
 #include "ametsuchi/impl/postgres_command_executor.hpp"
@@ -27,6 +28,7 @@ namespace iroha {
     MutableStorageImpl::MutableStorageImpl(
         boost::optional<std::shared_ptr<const iroha::LedgerState>> ledger_state,
         std::shared_ptr<PostgresCommandExecutor> command_executor,
+        std::shared_ptr<DataModelRegistry> data_model_registry,
         std::unique_ptr<BlockStorage> block_storage,
         logger::LoggerManagerTreePtr log_manager)
         : ledger_state_(std::move(ledger_state)),
@@ -40,6 +42,7 @@ namespace iroha {
               log_manager->getChild("PostgresBlockIndex")->getLogger())),
           transaction_executor_(std::make_unique<TransactionExecutor>(
               std::move(command_executor))),
+          data_model_registry_(std::move(data_model_registry)),
           block_storage_(std::move(block_storage)),
           committed(false),
           log_(log_manager->getLogger()) {
@@ -101,8 +104,10 @@ namespace iroha {
 
         if (function_executed) {
           sql_ << "RELEASE SAVEPOINT savepoint_";
+          data_model_registry_->commitTransaction();
         } else {
           sql_ << "ROLLBACK TO SAVEPOINT savepoint_";
+          data_model_registry_->rollbackTransaction();
         }
         return function_executed;
       } catch (std::exception &e) {
@@ -147,6 +152,7 @@ namespace iroha {
       }
       try {
         sql_ << "COMMIT";
+        data_model_registry_->commitBlock();
         committed = true;
       } catch (std::exception &e) {
         return expected::makeError(e.what());
@@ -159,6 +165,7 @@ namespace iroha {
       if (not committed) {
         try {
           sql_ << "ROLLBACK";
+          data_model_registry_->rollbackBlock();
         } catch (std::exception &e) {
           log_->warn("Apply has been failed. Reason: {}", e.what());
         }

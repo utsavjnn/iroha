@@ -12,6 +12,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include "ametsuchi/data_models/data_model_registry.hpp"
 #include "ametsuchi/impl/in_memory_block_storage_factory.hpp"
 #include "ametsuchi/impl/k_times_reconnection_strategy.hpp"
 #include "ametsuchi/impl/storage_impl.hpp"
@@ -107,6 +108,7 @@ namespace iroha {
                std::make_unique<InMemoryBlockStorageFactory>(),
                block_storage_,
                std::nullopt,
+               std::make_shared<DataModelRegistry>(),
                getTestLoggerManager()->getChild("Storage"));
          }
          |

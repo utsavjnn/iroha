@@ -5,43 +5,49 @@
 
 #include "ametsuchi/data_models/data_model_registry.hpp"
 
-namespace iroha{
-    namespace ametsuchi{
-        void DataModelRegistry::registerModule(std::unique_ptr<DataModel> dm_module){
-            for (auto const &dm_id : dm_module->getSupportedDmIds()) {
-                module_by_dm_id_.emplace_back(dm_id, *dm_module);
-                }
-            modules_.emplace_back(std::move(dm_module));
-        }
+#include "ametsuchi/data_models/data_model.hpp"
 
-        CommandResult DataModelRegistry::execute(shared_model::interface::CallModel &command)const{
-            shared_model::proto::CallModel cmd=static_cast<shared_model::proto::CallModel>(command);
-            auto it = executors.find(cmd.getTransport().dm_id());
-            if (it == executors.end()) {
-                return makeError("unknown data model");
-            }
-            return it->second->execute(cmd);
-        }
+using namespace iroha::ametsuchi;
 
-        void DataModelRegistry::rollback_block(){
-            for(auto it=modules_.begin();it!=modules_.end();it++)
-                (*it)->rollback_block();
-        }
-
-        void DataModelRegistry::rollback_transaction(){
-            for(auto it=modules_.begin();it!=modules_.end();it++)
-                (*it)->rollback_transaction();
-        }
-
-        void DataModelRegistry::commit_block(){
-            for(auto it=modules_.begin();it!=modules_.end();it++)
-                (*it)->commit_block();
-        }
-
-        void DataModelRegistry::commit_transaction(){
-            for(auto it=modules_.begin();it!=modules_.end();it++)
-                (*it)->commit_transaction();
-        }
-
+namespace {
+  void executeForEach(std::vector<std::unique_ptr<DataModel>> &modules,
+                      void (DataModel::*func)()) {
+    for (auto &module : modules) {
+      (module.get()->*func)();
     }
+  }
+}  // namespace
+
+void DataModelRegistry::registerModule(std::unique_ptr<DataModel> dm_module) {
+  for (auto const &dm_id : dm_module->getSupportedDataModelIds()) {
+    module_by_dm_id_.emplace(dm_id, *dm_module);
+  }
+  modules_.emplace_back(std::move(dm_module));
+}
+
+CommandResult DataModelRegistry::execute(
+    shared_model::proto::CallModel const &command) {
+  shared_model::interface::DataModelId id{command.name(), command.version()};
+  auto it = module_by_dm_id_.find(id);
+  if (it == module_by_dm_id_.end()) {
+    return iroha::expected::makeError(
+        iroha::ametsuchi::CommandError{"CallModel", 1, "unknown data model"});
+  }
+  return it->second.get().execute(command);
+}
+
+void DataModelRegistry::rollbackBlock() {
+  executeForEach(modules_, &DataModel::rollbackBlock);
+}
+
+void DataModelRegistry::rollbackTransaction() {
+  executeForEach(modules_, &DataModel::rollbackTransaction);
+}
+
+void DataModelRegistry::commitBlock() {
+  executeForEach(modules_, &DataModel::commitBlock);
+}
+
+void DataModelRegistry::commitTransaction() {
+  executeForEach(modules_, &DataModel::commitTransaction);
 }

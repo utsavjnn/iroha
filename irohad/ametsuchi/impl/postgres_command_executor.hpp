@@ -45,6 +45,7 @@ namespace shared_model {
 namespace iroha {
   namespace ametsuchi {
 
+    class DataModelRegistry;
     class PostgresSpecificQueryExecutor;
     class VmCaller;
 
@@ -56,7 +57,8 @@ namespace iroha {
               perm_converter,
           std::shared_ptr<PostgresSpecificQueryExecutor>
               specific_query_executor,
-          std::optional<std::reference_wrapper<const VmCaller>> vm_caller);
+          std::optional<std::reference_wrapper<const VmCaller>> vm_caller,
+          std::shared_ptr<DataModelRegistry> data_model_registry);
 
       ~PostgresCommandExecutor();
 
@@ -255,6 +257,7 @@ namespace iroha {
           perm_converter_;
       std::shared_ptr<PostgresSpecificQueryExecutor> specific_query_executor_;
       std::optional<std::reference_wrapper<const VmCaller>> vm_caller_;
+      std::shared_ptr<DataModelRegistry> data_model_registry_;
 
       std::unique_ptr<CommandStatements> add_asset_quantity_statements_;
       std::unique_ptr<CommandStatements> add_peer_statements_;

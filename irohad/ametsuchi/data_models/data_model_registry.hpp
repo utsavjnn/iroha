@@ -3,39 +3,41 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-#ifndef IROHA_DATA_MODEL_REGISTRY_HPP
-#define IROHA_DATA_MODEL_REGISTRY_HPP
+#ifndef IROHA_AMETSUCHI_DATA_MODEL_REGISTRY_HPP
+#define IROHA_AMETSUCHI_DATA_MODEL_REGISTRY_HPP
 
-#include <unordered_map>
-#include <string>
-#include <vector>
 #include <functional>
+#include <unordered_map>
+#include <vector>
 
 #include "ametsuchi/command_executor.hpp"
-#include "shared_model/backend/protobuf/commands/impl/proto_call_model.hpp"
-#include "shared_model/interfaces/commands/call_model.hpp"
-#include "shared_model/interfaces/common_objects/data_model_id.hpp"
+#include "backend/protobuf/commands/proto_call_model.hpp"
+#include "interfaces/common_objects/data_model_id.hpp"
 
-namespace iroha{
-    namespace ametsuchi {
-        class DataModelRegistry {
-            public:
-                void registerModule(std::unique_ptr<DataModel> dm_module);
+namespace iroha::ametsuchi {
+  class DataModel;
 
-                CommandResult execute(shared_model::proto::CallModel &command)const; 
-                
-                void rollback_block();
+  class DataModelRegistry {
+   public:
+    void registerModule(std::unique_ptr<DataModel> dm_module);
 
-                void rollback_transaction();
+    CommandResult execute(shared_model::proto::CallModel const &command);
 
-                void commit_block();
+    void rollbackBlock();
 
-                void commit_transaction();
-            private:
-                std::unordered_map<DataModelId,std::reference_wrapper<DataModel>> module_by_dm_id_;
-                std::vector<std::unique_ptr<DataModel>> modules_;
-        };
-    }
-}
+    void rollbackTransaction();
 
-#endif
+    void commitBlock();
+
+    void commitTransaction();
+
+   private:
+    std::unordered_map<shared_model::interface::DataModelId,
+                       std::reference_wrapper<DataModel>,
+                       shared_model::interface::DataModelId::Hasher>
+        module_by_dm_id_;
+    std::vector<std::unique_ptr<DataModel>> modules_;
+  };
+}  // namespace iroha::ametsuchi
+
+#endif  // IROHA_AMETSUCHI_DATA_MODEL_REGISTRY_HPP

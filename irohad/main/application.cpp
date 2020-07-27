@@ -118,11 +118,11 @@ Irohad::Irohad(
         opt_alternative_peers,
     logger::LoggerManagerTreePtr logger_manager,
     StartupWsvDataPolicy startup_wsv_data_policy,
+    std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry,
     const boost::optional<GossipPropagationStrategyParams>
         &opt_mst_gossip_params,
     const boost::optional<iroha::torii::TlsParams> &torii_tls_params,
-    boost::optional<IrohadConfig::InterPeerTls> inter_peer_tls_config,
-    std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry)
+    boost::optional<IrohadConfig::InterPeerTls> inter_peer_tls_config)
     : block_store_dir_(block_store_dir),
       listen_ip_(listen_ip),
       torii_port_(torii_port),
@@ -140,14 +140,14 @@ Irohad::Irohad(
       inter_peer_tls_config_(std::move(inter_peer_tls_config)),
       pending_txs_storage_init(
           std::make_unique<PendingTransactionStorageInit>()),
+      data_model_registry_(std::move(data_model_registry)),
       keypair(keypair),
       pg_opt_(std::move(pg_opt)),
       ordering_init(logger_manager->getLogger()),
       yac_init(std::make_unique<iroha::consensus::yac::YacInit>()),
       consensus_gate_objects(consensus_gate_objects_lifetime),
       log_manager_(std::move(logger_manager)),
-      log_(log_manager_->getLogger()),
-      data_model_registry_(std::move(data_model_registry)) {
+      log_(log_manager_->getLogger()) {
   log_->info("created");
   // TODO: rework in a more C++11+ - ish way luckychess 29.06.2019 IR-575
   std::srand(std::time(0));
@@ -335,6 +335,7 @@ Irohad::RunResult Irohad::initStorage(
                                std::move(temporary_block_storage_factory),
                                std::move(persistent_block_storage),
                                vm_caller_ref,
+                               data_model_registry_,
                                log_manager_->getChild("Storage"))
                | [&](auto &&v) -> RunResult {
       storage = std::move(v);
