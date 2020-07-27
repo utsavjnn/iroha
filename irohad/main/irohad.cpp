@@ -31,7 +31,6 @@
 #include "util/status_notifier.hpp"
 #include "util/utility_service.hpp"
 #include "validators/field_validator.hpp"
-#include "ametsuchi/data_models/data_model_registry.hpp"
 
 static const std::string kListenIp = "0.0.0.0";
 static const std::string kLogSettingsFromConfigFile = "config_file";
@@ -312,7 +311,7 @@ int main(int argc, char *argv[]) {
       boost::make_optional(config.mst_support,
                            iroha::GossipPropagationStrategyParams{}),
       config.torii_tls_params,
-      boost::none
+      boost::none,
       std::move(data_model_registry));
 
   // Check if iroha daemon storage was successfully initialized

@@ -1912,7 +1912,6 @@ namespace iroha {
         const std::string &tx_hash,
         shared_model::interface::types::CommandIndexType,
         bool do_validation) {
-<<<<<<< ecd811ac360453f4a33a8b9956c03bebdc16ca69
       try {
         if (do_validation) {
           int has_permission = 0;
@@ -1927,9 +1926,9 @@ namespace iroha {
       } catch (std::exception const &e) {
         return makeCommandError("CallModel", 1, e.what());
       }
-=======
->>>>>>> Client Iface and proto class: CallModel command
-      return {};
+
+      return irohad.data_model_registry_.execute(command);
+     // return {};
     }
 
     CommandResult PostgresCommandExecutor::operator()(

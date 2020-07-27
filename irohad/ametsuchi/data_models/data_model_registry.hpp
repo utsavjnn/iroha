@@ -13,6 +13,7 @@
 
 #include "ametsuchi/command_executor.hpp"
 #include "shared_model/backend/protobuf/commands/impl/proto_call_model.hpp"
+#include "shared_model/interfaces/commands/call_model.hpp"
 #include "shared_model/interfaces/common_objects/data_model_id.hpp"
 
 namespace iroha{
