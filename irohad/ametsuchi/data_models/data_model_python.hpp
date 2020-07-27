@@ -25,13 +25,13 @@ namespace iroha::ametsuchi {
 
     CommandResult execute(shared_model::proto::CallModel const &cmd) override;
 
-    void commit_transaction() override;
+    void commitTransaction() override;
 
-    void commit_block() override;
+    void commitBlock() override;
 
-    void rollback_transaction() override;
+    void rollbackTransaction() override;
 
-    void rollback_block() override;
+    void rollbackBlock() override;
 
     std::vector<shared_model::interface::DataModelId> getSupportedDataModelIds()
         const override;

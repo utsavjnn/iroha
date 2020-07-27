@@ -112,19 +112,19 @@ CommandResult DataModelPython::execute(
   }
 }
 
-void DataModelPython::commit_transaction() {
+void DataModelPython::commitTransaction() {
   impl_->func_commit_tx();
 }
 
-void DataModelPython::commit_block() {
+void DataModelPython::commitBlock() {
   impl_->func_commit_block();
 }
 
-void DataModelPython::rollback_transaction() {
+void DataModelPython::rollbackTransaction() {
   impl_->func_rollback_tx();
 }
 
-void DataModelPython::rollback_block() {
+void DataModelPython::rollbackBlock() {
   impl_->func_rollback_block();
 }
 

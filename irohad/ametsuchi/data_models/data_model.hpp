@@ -21,13 +21,13 @@ namespace iroha::ametsuchi {
     virtual CommandResult execute(
         shared_model::proto::CallModel const &cmd) = 0;
 
-    virtual void commit_transaction() = 0;
+    virtual void commitTransaction() = 0;
 
-    virtual void commit_block() = 0;
+    virtual void commitBlock() = 0;
 
-    virtual void rollback_transaction() = 0;
+    virtual void rollbackTransaction() = 0;
 
-    virtual void rollback_block() = 0;
+    virtual void rollbackBlock() = 0;
 
     virtual std::vector<shared_model::interface::DataModelId>
     getSupportedDataModelIds() const = 0;
