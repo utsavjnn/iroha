@@ -44,6 +44,7 @@
 #include "interfaces/queries/get_transactions.hpp"
 #include "interfaces/queries/query.hpp"
 #include "interfaces/queries/tx_pagination_meta.hpp"
+#include "interfaces/queries/query_model.hpp"
 #include "interfaces/transaction.hpp"
 #include "logger/logger.hpp"
 #include "pending_txs_storage/pending_txs_storage.hpp"
@@ -1627,6 +1628,13 @@ namespace iroha {
                                        Role::kGetAllEngineReceipts,
                                        Role::kGetDomainEngineReceipts));
     }
+
+    QueryExecutorResult PostgresSpecificQueryExecutor::operator()(
+        const shared_model::interface::QueryModel &q,
+        const shared_model::interface::types::AccountIdType &creator_id,
+        const shared_model::interface::types::HashType &query_hash) {
+          
+        }
 
     template <typename ReturnValueType>
     bool PostgresSpecificQueryExecutor::existsInDb(

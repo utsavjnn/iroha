@@ -77,6 +77,7 @@ enum RolePermission {
   can_get_my_engine_receipts = 50;
   can_get_domain_engine_receipts = 51;
   can_get_all_engine_receipts = 52;
+  can_query_model = 54;
 
   // Grant permissions
   can_grant_can_set_my_quorum = 37;

@@ -50,6 +50,7 @@ add_library(shared_model_interfaces
     queries/impl/get_engine_receipts.cpp
     queries/impl/get_peers.cpp
     queries/impl/ordering.cpp
+    queries/impl/query_model.cpp
     common_objects/impl/amount.cpp
     common_objects/impl/signature.cpp
     common_objects/impl/peer.cpp
@@ -83,6 +84,7 @@ if (IROHA_ROOT_PROJECT)
       query_responses/impl/engine_receipt.cpp
       query_responses/impl/engine_log.cpp
       query_responses/impl/engine_receipts_response.cpp
+	query_responses/impl/query_model_response.cpp
       transaction_responses/impl/tx_response.cpp
       iroha_internal/batch_meta.cpp
       iroha_internal/transaction_sequence.cpp

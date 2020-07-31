@@ -192,6 +192,11 @@ namespace shared_model {
             crypto::Hash::fromHexString(qry.txHash()));
       }
 
+      std::optional<ValidationError> operator()(
+          const interface::QueryModel &qry) const {
+        return std::nullopt;
+      }
+
      private:
       FieldValidator validator_;
     };

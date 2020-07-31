@@ -120,6 +120,11 @@ message EngineReceiptsResponse {
   repeated EngineReceipt engine_receipts = 1;
 }
 
+message QueryModelResponse {
+  message Payload {}
+  Payload payload = 1;
+}
+
 message QueryResponse {
   oneof response {
     AccountAssetResponse account_assets_response = 1;
@@ -136,6 +141,7 @@ message QueryResponse {
     BlockResponse block_response = 12;
     PeersResponse peers_response = 14;
     EngineReceiptsResponse engine_receipts_response = 15;
+    QueryModelResponse query_model_response=16;
   }
   string query_hash = 10;
 }

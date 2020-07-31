@@ -124,6 +124,11 @@ message GetEngineReceipts {
   string tx_hash = 1;
 }
 
+message QueryModel {
+  message Payload {}
+  Payload payload = 1;
+  DataModelId dm_id = 2;
+}
 
 message Query {
   message Payload {
@@ -143,6 +148,7 @@ message Query {
       GetBlock get_block = 14;
       GetPeers get_peers = 15;
       GetEngineReceipts get_engine_receipts = 16;
+	QueryModel query_model=17;
     }
   }
 

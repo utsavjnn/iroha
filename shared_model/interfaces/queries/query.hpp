@@ -27,7 +27,7 @@ namespace shared_model {
     class GetPendingTransactions;
     class GetPeers;
     class GetEngineReceipts;
-
+    class QueryModel;
     /**
      * Class Query provides container with one of concrete query available in
      * system.
@@ -54,7 +54,8 @@ namespace shared_model {
                                     GetPendingTransactions,
                                     GetBlock,
                                     GetPeers,
-                                    GetEngineReceipts>;
+                                    GetEngineReceipts,
+                                    QueryModel>;
 
       /**
        * @return reference to const variant with concrete command
