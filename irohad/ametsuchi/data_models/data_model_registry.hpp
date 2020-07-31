@@ -31,6 +31,7 @@ namespace iroha::ametsuchi {
 
     void commitTransaction();
 
+    void resetState();
    private:
     std::unordered_map<shared_model::interface::DataModelId,
                        std::reference_wrapper<DataModel>,

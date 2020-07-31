@@ -18,6 +18,10 @@ namespace {
   }
 }  // namespace
 
+void DataModelRegistry::resetState(){
+            executeForEach(modules_, &DataModel::resetState);
+        }
+
 void DataModelRegistry::registerModule(std::unique_ptr<DataModel> dm_module) {
   for (auto const &dm_id : dm_module->getSupportedDataModelIds()) {
     module_by_dm_id_.emplace(dm_id, *dm_module);
@@ -35,6 +39,8 @@ CommandResult DataModelRegistry::execute(
   }
   return it->second.get().execute(command);
 }
+
+
 
 void DataModelRegistry::rollbackBlock() {
   executeForEach(modules_, &DataModel::rollbackBlock);
