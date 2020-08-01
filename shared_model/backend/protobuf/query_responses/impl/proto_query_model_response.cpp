@@ -8,8 +8,8 @@
 namespace shared_model {
   namespace proto {
 
-    QueryModelResponse::QueryModelResponse(iroha::protocol::QueryResponse &query_response)
-        : query_model_response_{query_response.query_model_response()} {}
+    QueryModelResponse::QueryModelResponse(iroha::protocol::QueryModelResponse &query_response)
+        : query_model_response_{query_response} {}
 
     const iroha::protocol::QueryModelResponse &QueryModelResponse::getTransport() const{
         return query_model_response_;

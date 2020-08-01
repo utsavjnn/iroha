@@ -15,7 +15,7 @@ namespace shared_model {
     class QueryModelResponse : public interface::QueryModelResponse {
      public:
 
-      using TransportType = iroha::protocol::QueryResponse;
+      using TransportType = iroha::protocol::QueryModelResponse;
 
       explicit QueryModelResponse(TransportType &proto);
 

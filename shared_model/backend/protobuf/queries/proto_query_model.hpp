@@ -14,7 +14,7 @@ namespace shared_model {
   namespace proto {
     class QueryModel : public interface::QueryModel {
      public:
-        explicit QueryModel(iroha::protocol::Query &query);
+        explicit QueryModel(iroha::protocol::QueryModel &query);
 
         virtual ~QueryModel();
 

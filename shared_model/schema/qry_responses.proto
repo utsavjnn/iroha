@@ -122,7 +122,10 @@ message EngineReceiptsResponse {
 
 message QueryModelResponse {
   message Payload {}
-  Payload payload = 1;
+  oneof result { 
+    Payload payload = 1;
+    ErrorResponse error = 2;
+  }
 }
 
 message QueryResponse {
@@ -141,7 +144,6 @@ message QueryResponse {
     BlockResponse block_response = 12;
     PeersResponse peers_response = 14;
     EngineReceiptsResponse engine_receipts_response = 15;
-    QueryModelResponse query_model_response=16;
   }
   string query_hash = 10;
 }

@@ -148,7 +148,6 @@ message Query {
       GetBlock get_block = 14;
       GetPeers get_peers = 15;
       GetEngineReceipts get_engine_receipts = 16;
-	QueryModel query_model=17;
     }
   }
 

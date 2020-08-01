@@ -7,8 +7,8 @@
 
 namespace shared_model {
     namespace proto {
-        QueryModel::QueryModel(iroha::protocol::Query &query)
-                : query_model_{query.payload().query_model()} {}
+        QueryModel::QueryModel(iroha::protocol::QueryModel &query)
+                : query_model_{query} {}
         
         QueryModel::~QueryModel() = default;
 
