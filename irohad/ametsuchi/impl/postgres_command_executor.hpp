@@ -240,6 +240,14 @@ namespace iroha {
           shared_model::interface::types::CommandIndexType,
           bool do_validation);
 
+      CommandResult operator()(
+          const shared_model::interface::RegisterDataModel &command,
+          const shared_model::interface::types::AccountIdType
+              &creator_account_id,
+          const std::string &tx_hash,
+          shared_model::interface::types::CommandIndexType,
+          bool do_validation);
+
      private:
       class CommandStatements;
       class StatementExecutor;

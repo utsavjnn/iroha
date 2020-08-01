@@ -25,6 +25,7 @@ namespace shared_model {
     class CreateRole;
     class DetachRole;
     class GrantPermission;
+    class RegisterDataModel;
     class RemovePeer;
     class RemoveSignatory;
     class RevokePermission;
@@ -67,7 +68,8 @@ namespace shared_model {
                                       SetSettingValue,
                                       SubtractAssetQuantity,
                                       TransferAsset,
-                                      CallModel>;
+                                      CallModel,
+                                      RegisterDataModel>;
 
       /**
        * @return reference to const variant with concrete command

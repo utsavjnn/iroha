@@ -48,6 +48,7 @@ enum RolePermission {
   can_subtract_domain_asset_qty = 44;
   can_call_engine = 48;
   can_call_model = 53;
+  can_register_data_model = 54;
 
   // Query permissions
   can_read_assets = 15;

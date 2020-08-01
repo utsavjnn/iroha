@@ -18,6 +18,7 @@
 #include "backend/protobuf/commands/proto_create_role.hpp"
 #include "backend/protobuf/commands/proto_detach_role.hpp"
 #include "backend/protobuf/commands/proto_grant_permission.hpp"
+#include "backend/protobuf/commands/proto_register_data_model.hpp"
 #include "backend/protobuf/commands/proto_remove_peer.hpp"
 #include "backend/protobuf/commands/proto_remove_signatory.hpp"
 #include "backend/protobuf/commands/proto_revoke_permission.hpp"
@@ -50,7 +51,8 @@ namespace {
                        shared_model::proto::SetSettingValue,
                        shared_model::proto::SubtractAssetQuantity,
                        shared_model::proto::TransferAsset,
-                       shared_model::proto::CallModel>;
+                       shared_model::proto::CallModel,
+                       shared_model::proto::RegisterDataModel>;
 }  // namespace
 
 #ifdef IROHA_BIND_TYPE
@@ -93,6 +95,7 @@ namespace shared_model::proto {
         IROHA_BIND_TYPE(kSetSettingValue, SetSettingValue, ar);
         IROHA_BIND_TYPE(kCallEngine, CallEngine, ar);
         IROHA_BIND_TYPE(kCallModel, CallModel, ar);
+        IROHA_BIND_TYPE(kRegisterDataModel, RegisterDataModel, ar);
 
         default:
         case iroha::protocol::Command::CommandCase::COMMAND_NOT_SET:

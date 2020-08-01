@@ -69,7 +69,8 @@ namespace shared_model {
         kGetDomainEngineReceipts,
         kGetAllEngineReceipts,
         kCallModel,
-
+        kRegisterDataModel,
+        
         COUNT
       };
 

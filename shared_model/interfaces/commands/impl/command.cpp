@@ -21,6 +21,7 @@
 #include "interfaces/commands/remove_peer.hpp"
 #include "interfaces/commands/remove_signatory.hpp"
 #include "interfaces/commands/revoke_permission.hpp"
+#include "interfaces/commands/register_data_model.hpp"
 #include "interfaces/commands/set_account_detail.hpp"
 #include "interfaces/commands/set_quorum.hpp"
 #include "interfaces/commands/set_setting_value.hpp"

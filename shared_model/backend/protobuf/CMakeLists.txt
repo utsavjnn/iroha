@@ -27,6 +27,7 @@ add_library(shared_model_proto_backend
     commands/impl/proto_create_role.cpp
     commands/impl/proto_detach_role.cpp
     commands/impl/proto_grant_permission.cpp
+    commands/impl/proto_register_data_model.cpp
     commands/impl/proto_remove_peer.cpp
     commands/impl/proto_remove_signatory.cpp
     commands/impl/proto_revoke_permission.cpp

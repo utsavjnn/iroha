@@ -25,6 +25,7 @@ namespace boost {
       const shared_model::interface::CreateRole &,
       const shared_model::interface::DetachRole &,
       const shared_model::interface::GrantPermission &,
+      const shared_model::interface::RegisterDataModel &,
       const shared_model::interface::RemoveSignatory &,
       const shared_model::interface::RevokePermission &,
       const shared_model::interface::SetAccountDetail &,

@@ -37,6 +37,7 @@
 #include "interfaces/commands/create_role.hpp"
 #include "interfaces/commands/detach_role.hpp"
 #include "interfaces/commands/grant_permission.hpp"
+#include "interfaces/commands/register_data_model.cpp"
 #include "interfaces/commands/remove_peer.hpp"
 #include "interfaces/commands/remove_signatory.hpp"
 #include "interfaces/commands/revoke_permission.hpp"
@@ -1933,6 +1934,29 @@ namespace iroha {
 
       return data_model_registry_->execute(
           static_cast<shared_model::proto::CallModel const &>(command));
+    }
+
+    CommandResult PostgresCommandExecutor::operator()(
+        const shared_model::interface::RegisterDataModel &command,
+        const shared_model::interface::types::AccountIdType &creator_account_id,
+        const std::string &tx_hash,
+        shared_model::interface::types::CommandIndexType,
+        bool do_validation) {
+      try {
+        if (do_validation) {
+          int has_permission = 0;
+          using namespace ::shared_model::interface::permissions;
+          *sql_ << checkAccountRolePermission(Role::kRegisterCallModel, ":creator"),
+              soci::use(creator_account_id, "creator"),
+              soci::into(has_permission);
+          if (has_permission == 0) {
+            return makeCommandError("RegisterCallModel", 2, "Not enough permissions.");
+          }
+        }
+      } catch (std::exception const &e) {
+        return makeCommandError("RegisterCallModel", 1, e.what());
+      }
+      return {};
     }
 
     CommandResult PostgresCommandExecutor::operator()(
