@@ -218,7 +218,7 @@ Irohad::RunResult Irohad::dropStorage() {
 
 Irohad::RunResult Irohad::resetWsv() {
   storage.reset();
-
+  data_model_registry_.reset_state();
   log_->info("Recreating schema.");
   return initStorage(StartupWsvDataPolicy::kDrop);
 }
