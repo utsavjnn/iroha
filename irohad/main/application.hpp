@@ -23,6 +23,7 @@
 #include "main/startup_params.hpp"
 #include "multi_sig_transactions/gossip_propagation_strategy_params.hpp"
 #include "torii/tls_params.hpp"
+#include "ametsuchi/data_models/data_model_registry.hpp"
 
 namespace iroha {
   class PendingTransactionStorage;
@@ -138,7 +139,9 @@ class Irohad {
          const boost::optional<iroha::torii::TlsParams> &torii_tls_params =
              boost::none,
          boost::optional<IrohadConfig::InterPeerTls> inter_peer_tls_config =
-             boost::none);
+             boost::none,
+         std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry 
+         );
 
   /**
    * Initialization of whole objects in system
@@ -272,6 +275,7 @@ class Irohad {
   shared_model::crypto::Keypair keypair;
   std::unique_ptr<iroha::ametsuchi::PostgresOptions> pg_opt_;
   std::shared_ptr<iroha::ametsuchi::Storage> storage;
+  std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry_;
 
  protected:
   rxcpp::observable<shared_model::interface::types::HashType> finalized_txs_;

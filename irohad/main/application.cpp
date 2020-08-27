@@ -122,7 +122,8 @@ Irohad::Irohad(
     const boost::optional<GossipPropagationStrategyParams>
         &opt_mst_gossip_params,
     const boost::optional<iroha::torii::TlsParams> &torii_tls_params,
-    boost::optional<IrohadConfig::InterPeerTls> inter_peer_tls_config)
+    boost::optional<IrohadConfig::InterPeerTls> inter_peer_tls_config,
+    std::shared_ptr<iroha::ametsuchi::DataModelRegistry> data_model_registry)
     : block_store_dir_(block_store_dir),
       listen_ip_(listen_ip),
       torii_port_(torii_port),
@@ -147,7 +148,8 @@ Irohad::Irohad(
       yac_init(std::make_unique<iroha::consensus::yac::YacInit>()),
       consensus_gate_objects(consensus_gate_objects_lifetime),
       log_manager_(std::move(logger_manager)),
-      log_(log_manager_->getLogger()) {
+      log_(log_manager_->getLogger()),
+      data_model_registry_(std::move(data_model_registry)) {
   log_->info("created");
   // TODO: rework in a more C++11+ - ish way luckychess 29.06.2019 IR-575
   std::srand(std::time(0));
