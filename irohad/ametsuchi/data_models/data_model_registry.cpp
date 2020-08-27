@@ -18,13 +18,14 @@ namespace {
   }
 }  // namespace
 
-void DataModelRegistry::resetState(){
-            executeForEach(modules_, &DataModel::resetState);
-        }
+void DataModelRegistry::enableDM(shared_model::interface::DataModelId id) {
+    module_by_dm_id_[id].enable=true;
+}
 
 void DataModelRegistry::registerModule(std::unique_ptr<DataModel> dm_module) {
   for (auto const &dm_id : dm_module->getSupportedDataModelIds()) {
-    module_by_dm_id_.emplace(dm_id, *dm_module);
+    RegisteredModel rm{false,*dm_module};
+    module_by_dm_id_.emplace(dm_id, rm);
   }
   modules_.emplace_back(std::move(dm_module));
 }
@@ -40,6 +41,8 @@ CommandResult DataModelRegistry::execute(
   return it->second.get().execute(command);
 }
 
+void DataModelRegistry::resetState(){
+            executeForEach(modules_, &DataModel::resetState);
 
 
 void DataModelRegistry::rollbackBlock() {

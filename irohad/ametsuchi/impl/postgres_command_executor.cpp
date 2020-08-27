@@ -1956,7 +1956,7 @@ namespace iroha {
       } catch (std::exception const &e) {
         return makeCommandError("RegisterCallModel", 1, e.what());
       }
-      return {};
+      return data_model_registry_->enableDM(command.id());
     }
 
     CommandResult PostgresCommandExecutor::operator()(

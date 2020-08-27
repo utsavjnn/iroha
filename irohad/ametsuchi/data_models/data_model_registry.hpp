@@ -32,12 +32,20 @@ namespace iroha::ametsuchi {
     void commitTransaction();
 
     void resetState();
+
+    struct RegisteredModel 
+    { 
+      bool enabled;
+      std::reference_wrapper<DataModel> dm;
+    };
+
    private:
     std::unordered_map<shared_model::interface::DataModelId,
-                       std::reference_wrapper<DataModel>,
+                       RegisteredModel,
                        shared_model::interface::DataModelId::Hasher>
         module_by_dm_id_;
     std::vector<std::unique_ptr<DataModel>> modules_;
+    std::vector<RegisteredModel> registered_models_;
   };
 }  // namespace iroha::ametsuchi
 
